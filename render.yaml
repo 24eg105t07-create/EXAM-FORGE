@@ -3,7 +3,8 @@ services:
   - type: web
     name: examforge-backend
     runtime: docker
-    dockerfilePath: backend/Dockerfile
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     plan: free
     region: oregon
     envVars:
@@ -22,6 +23,9 @@ services:
     buildCommand: npm install && npm run build
     staticPublishPath: dist
     routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://examforge-backend.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html
