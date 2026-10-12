@@ -11,16 +11,13 @@ services:
         value: dev
       - key: AI_PROVIDER
         value: LOCAL_DEMO
-      - key: SERVER_PORT
-        value: 8080
 
   # 2. React Vite Frontend Static Site
-  - type: web
+  - type: staticSite
     name: examforge-frontend
-    runtime: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist
-    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
     routes:
       - type: rewrite
         source: /*
