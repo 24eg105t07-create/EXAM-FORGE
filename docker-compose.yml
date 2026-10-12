@@ -6,10 +6,10 @@ services:
     container_name: examforge-mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: examforge
-      MYSQL_USER: examforge_user
-      MYSQL_PASSWORD: examforge_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-examforge}
+      MYSQL_USER: ${MYSQL_USER:-examforge_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-examforge_password}
     ports:
       - "3306:3306"
     volumes:
@@ -20,7 +20,52 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - examforge-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: examforge-backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-examforge}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-examforge_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-examforge_password}
+      JWT_SECRET: ${JWT_SECRET:-ExamForgeSecretKeyMustBeAtLeast256BitsLongForHMACSHA256Signature2026Secure!}
+      AI_PROVIDER: ${AI_PROVIDER:-LOCAL_DEMO}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - backend_uploads:/app/uploads
+    networks:
+      - examforge-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: examforge-frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "${PORT:-80}:80"
+    networks:
+      - examforge-network
 
 volumes:
   mysql_data:
     driver: local
+  backend_uploads:
+    driver: local
+
+networks:
+  examforge-network:
+    driver: bridge
