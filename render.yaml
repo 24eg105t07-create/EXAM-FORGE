@@ -11,6 +11,8 @@ services:
         value: dev
       - key: AI_PROVIDER
         value: LOCAL_DEMO
+      - key: PORT
+        value: "10000"
 
   # 2. React Vite Frontend Static Site
   - type: web
