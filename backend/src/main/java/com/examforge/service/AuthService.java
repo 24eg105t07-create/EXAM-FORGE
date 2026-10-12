@@ -1,6 +1,7 @@
 package com.examforge.service;
 
 import com.examforge.dto.AuthDtos;
+import com.examforge.entity.Role;
 import com.examforge.entity.User;
 import com.examforge.entity.UserStatus;
 import com.examforge.exception.BadRequestException;
@@ -60,6 +61,39 @@ public class AuthService {
         String refreshToken = jwtUtils.generateRefreshToken(principal);
 
         auditLogService.logAction("USER_LOGIN", "USER", principal.getId(), "User logged in successfully", ipAddress);
+
+        return AuthDtos.AuthResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .user(mapToSummaryDto(principal))
+                .build();
+    }
+
+    @Transactional
+    public AuthDtos.AuthResponse register(AuthDtos.RegisterRequest request, String ipAddress) {
+        String cleanEmail = request.getEmail().trim().toLowerCase();
+        if (userRepository.existsByEmail(cleanEmail)) {
+            throw new BadRequestException("An account with email " + cleanEmail + " already exists. Please sign in instead.");
+        }
+
+        Role assignedRole = request.getRole() != null ? request.getRole() : Role.STUDENT;
+
+        User user = User.builder()
+                .email(cleanEmail)
+                .fullName(request.getFullName().trim())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .role(assignedRole)
+                .status(UserStatus.ACTIVE)
+                .phone(request.getPhone() != null && !request.getPhone().isBlank() ? request.getPhone().trim() : null)
+                .build();
+
+        user = userRepository.save(user);
+
+        auditLogService.logAction("USER_REGISTER", "USER", user.getId(), "New user self-registered with role: " + assignedRole, ipAddress);
+
+        UserPrincipal principal = UserPrincipal.create(user);
+        String accessToken = jwtUtils.generateAccessToken(principal);
+        String refreshToken = jwtUtils.generateRefreshToken(principal);
 
         return AuthDtos.AuthResponse.builder()
                 .accessToken(accessToken)

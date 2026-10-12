@@ -28,6 +28,16 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request, ipAddress));
     }
 
+    @PostMapping("/register")
+    @Operation(summary = "Register a new user account")
+    public ResponseEntity<AuthDtos.AuthResponse> register(
+            @Valid @RequestBody AuthDtos.RegisterRequest request,
+            HttpServletRequest servletRequest
+    ) {
+        String ipAddress = servletRequest.getRemoteAddr();
+        return new ResponseEntity<>(authService.register(request, ipAddress), org.springframework.http.HttpStatus.CREATED);
+    }
+
     @PostMapping("/refresh")
     @Operation(summary = "Refresh JWT access token")
     public ResponseEntity<AuthDtos.AuthResponse> refreshToken(
