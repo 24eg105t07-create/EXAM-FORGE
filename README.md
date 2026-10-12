@@ -15,6 +15,7 @@ ExamForge is an end-to-end examination platform built for higher education insti
   * Backend deterministic distribution arithmetic (percentages always sum to 100%).
   * Pluggable provider architecture: **Local Demo Provider** (zero-API-key mode), **Google Gemini 1.5 Flash**, and **OpenAI GPT-4o**.
 * **Academic Integrity & Security**:
+  * **Self-Registration & Authentication**: Users can create a new account (as Student, Teacher, or Management) or sign in with existing credentials.
   * Passwords hashed with BCrypt.
   * Stateless JWT authentication with role-based and resource-level authorization.
   * Server-enforced test windows and attempt deadlines.
