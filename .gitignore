@@ -1,0 +1,35 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Backend Build & IDE
+backend/target/
+backend/.idea/
+backend/*.iml
+.idea/
+*.iml
+*.log
+
+# Frontend Build & Dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# File uploads & storage
+backend/uploads/
+uploads/
+
+# Environment files with actual secrets
+.env
+*.local
+
+# Database files
+database/*.db
+backend/data/
+data/
+*.h2.db
+*.mv.db
+
+# Archives
+*.zip
+

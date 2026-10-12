@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: examforge-backend
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 20MB
+
+server:
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Actuator & Metrics
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# OpenAPI / Swagger
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: method
+
+# ExamForge Custom Configuration
+examforge:
+  jwt:
+    secret: ${JWT_SECRET:ExamForgeSecretKeyMustBeAtLeast256BitsLongForHMACSHA256Signature2026Secure!}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+    refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
+  upload:
+    directory: ${UPLOAD_DIR:./uploads}
+    max-file-size-mb: ${MAX_FILE_SIZE_MB:15}
+  ai:
+    provider: ${AI_PROVIDER:LOCAL_DEMO} # LOCAL_DEMO, GEMINI, OPENAI
+    gemini:
+      api-key: ${GEMINI_API_KEY:}
+      model: ${GEMINI_MODEL:gemini-1.5-flash}
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      model: ${OPENAI_MODEL:gpt-4o-mini}
+  bootstrap:
+    admin-email: ${BOOTSTRAP_ADMIN_EMAIL:admin@college.edu}
+    admin-password: ${BOOTSTRAP_ADMIN_PASSWORD:Admin@ExamForge2026}
+    admin-name: ${BOOTSTRAP_ADMIN_NAME:College SuperAdmin}
+  college:
+    timezone: ${COLLEGE_TIMEZONE:Asia/Kolkata}
