@@ -5,7 +5,7 @@ services:
     runtime: docker
     dockerfilePath: backend/Dockerfile
     plan: free
-    region: ohio
+    region: oregon
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: dev
@@ -13,8 +13,9 @@ services:
         value: LOCAL_DEMO
 
   # 2. React Vite Frontend Static Site
-  - type: staticSite
+  - type: web
     name: examforge-frontend
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
