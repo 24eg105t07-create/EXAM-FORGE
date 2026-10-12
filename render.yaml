@@ -1,0 +1,27 @@
+services:
+  # 1. Spring Boot Backend Web Service
+  - type: web
+    name: examforge-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    plan: free
+    region: ohio
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: dev
+      - key: AI_PROVIDER
+        value: LOCAL_DEMO
+      - key: SERVER_PORT
+        value: 8080
+
+  # 2. React Vite Frontend Static Site
+  - type: web
+    name: examforge-frontend
+    runtime: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    plan: free
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
